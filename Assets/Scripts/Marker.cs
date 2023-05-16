@@ -13,9 +13,6 @@ namespace BNG {
 
         public float RaycastLength = 0.01f;
 
-        /// <summary>
-        /// Minimum distance required from points to place drawing down
-        /// </summary>
         public float MinDrawDistance = 0.02f;
         public float ReuseTolerance = 0.001f;
 
@@ -23,7 +20,6 @@ namespace BNG {
         Vector3 lastDrawPoint;
         LineRenderer LineRenderer;
 
-        // Use this to store our Marker's LineRenderers
         Transform root;
         Transform lastTransform;
         Coroutine drawRoutine = null;
@@ -47,15 +43,15 @@ namespace BNG {
             base.OnRelease();
         }
 
+        void Draw(Transform RaycastStart, RaycastHit hit)
+        {
+            // TODO
+        }
+
         IEnumerator WriteRoutine() {
             while (true) {
                 if (Physics.Raycast(RaycastStart.position, RaycastStart.up, out RaycastHit hit, RaycastLength, DrawingLayers, QueryTriggerInteraction.Ignore)) {
-                    float tipDistance = Vector3.Distance(hit.point, RaycastStart.transform.position);
-                    float tipDercentage = tipDistance / RaycastLength;
-                    Vector3 drawStart = hit.point + (-RaycastStart.up * 0.0005f);
-                    Quaternion drawRotation = Quaternion.FromToRotation(Vector3.back, hit.normal);
-                    float lineWidth = LineWidth * (1 - tipDercentage);
-                    InitDraw(drawStart, drawRotation, lineWidth, DrawColor);
+                    Draw(RaycastStart, hit);
                 }
                 else {
                     IsNewDraw = true;
@@ -106,7 +102,6 @@ namespace BNG {
                 LineRenderer.endWidth = lineWidth;
                 var curve = new AnimationCurve();
                 curve.AddKey(0, lineWidth);
-                //curve.AddKey(1, lineWidth);
                 LineRenderer.widthCurve = curve;
                 if (DrawMaterial) {
                     LineRenderer.material = DrawMaterial;
@@ -131,7 +126,6 @@ namespace BNG {
         }
 
         void OnDrawGizmosSelected() {
-            // Show Grip Point
             Gizmos.color = Color.green;
             Gizmos.DrawLine(RaycastStart.position, RaycastStart.position + RaycastStart.up * RaycastLength);
         }
